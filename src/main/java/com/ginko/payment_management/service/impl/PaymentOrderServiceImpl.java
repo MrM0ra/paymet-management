@@ -2,7 +2,9 @@ package com.ginko.payment_management.service.impl;
 
 import com.ginko.payment_management.dto.request.CreatePaymentOrderRequest;
 import com.ginko.payment_management.dto.request.UpdatePaymentOrderStatusRequest;
+import com.ginko.payment_management.dto.response.ExpiringPaymentOrderResponse;
 import com.ginko.payment_management.dto.response.PaymentOrderResponse;
+import com.ginko.payment_management.dto.response.ProviderPaymentReportResponse;
 import com.ginko.payment_management.entity.PaymentOrder;
 import com.ginko.payment_management.entity.Provider;
 import com.ginko.payment_management.enums.PaymentOrderStatus;
@@ -17,6 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -167,6 +174,60 @@ public class PaymentOrderServiceImpl implements PaymentOrderService {
                 .createdAt(order.getCreatedAt())
                 .status(order.getStatus())
                 .build();
+    }
+
+    @Override
+    public ProviderPaymentReportResponse getProviderPaymentReport(
+            UUID providerId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+
+        Provider provider = findProviderById(providerId);
+
+        BigDecimal totalPaid =
+                paymentOrderRepository.getTotalPaidByProviderAndDateRange(
+                        providerId,
+                        startDate.atStartOfDay(),
+                        endDate.atTime(23, 59, 59)
+                );
+
+        return ProviderPaymentReportResponse.builder()
+                .providerId(provider.getId())
+                .providerName(provider.getBusinessName())
+                .startDate(startDate)
+                .endDate(endDate)
+                .totalPaid(totalPaid)
+                .build();
+    }
+
+    @Override
+    public List<ExpiringPaymentOrderResponse> getExpiringOrders() {
+
+        LocalDateTime threshold =
+                LocalDateTime.now().minusDays(25);
+
+        List<PaymentOrder> orders =
+                paymentOrderRepository.findByStatusAndCreatedAtBefore(
+                        PaymentOrderStatus.APPROVED,
+                        threshold
+                );
+
+        return orders.stream()
+                .map(order -> ExpiringPaymentOrderResponse.builder()
+                        .orderId(order.getId())
+                        .providerName(order.getProvider().getBusinessName())
+                        .amount(order.getAmount())
+                        .concept(order.getConcept())
+                        .createdAt(order.getCreatedAt())
+                        .daysPending(
+                                ChronoUnit.DAYS.between(
+                                        order.getCreatedAt(),
+                                        LocalDateTime.now()
+                                )
+                        )
+                        .build())
+                .toList();
     }
 
 }

@@ -158,6 +158,64 @@
               ]
             }
           }
+        },
+        {
+          "name": "Get Total Paid By Provider In Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/reports/provider-payments?providerId={{providerId}}&startDate=2026-05-01&endDate=2026-05-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "reports",
+                "provider-payments"
+              ],
+              "query": [
+                {
+                  "key": "providerId",
+                  "value": "{{providerId}}"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2026-05-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-05-31"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/payment-orders/reports/provider-payments?providerId={{providerId}}&startDate=2026-05-01&endDate=2026-05-31",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payment-orders",
+                    "reports",
+                    "provider-payments"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"providerId\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\n  \"providerName\": \"ACME SAS\",\n  \"startDate\": \"2026-05-01\",\n  \"endDate\": \"2026-05-31\",\n  \"totalPaid\": 4500000\n}"
+            }
+          ]
         }
       ]
     },
@@ -364,6 +422,48 @@
               ]
             }
           }
+        },
+        {
+          "name": "Get Expiring Payment Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/expiring",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "expiring"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Successful Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/payment-orders/expiring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payment-orders",
+                    "expiring"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "[\n  {\n    \"orderId\": \"4c6f9c8d-ef71-4d15-a95b-92cce9b9f444\",\n    \"providerName\": \"ACME SAS\",\n    \"amount\": 1500000,\n    \"concept\": \"Software development services\",\n    \"createdAt\": \"2026-04-01T10:00:00\",\n    \"daysPending\": 28\n  }\n]"
+            }
+          ]
         }
       ]
     }

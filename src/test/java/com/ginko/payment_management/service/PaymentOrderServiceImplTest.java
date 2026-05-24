@@ -2,6 +2,8 @@ package com.ginko.payment_management.service;
 
 import com.ginko.payment_management.dto.request.CreatePaymentOrderRequest;
 import com.ginko.payment_management.dto.request.UpdatePaymentOrderStatusRequest;
+import com.ginko.payment_management.dto.response.ExpiringPaymentOrderResponse;
+import com.ginko.payment_management.dto.response.ProviderPaymentReportResponse;
 import com.ginko.payment_management.entity.PaymentOrder;
 import com.ginko.payment_management.entity.Provider;
 import com.ginko.payment_management.enums.PaymentOrderStatus;
@@ -17,10 +19,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,6 +97,69 @@ class PaymentOrderServiceImplTest {
                 BusinessException.class,
                 () -> paymentOrderService.updateStatus(orderId, request)
         );
+    }
+
+    @Test
+    void shouldReturnProviderPaymentReport() {
+
+        UUID providerId = UUID.randomUUID();
+
+        Provider provider = Provider.builder()
+                .id(providerId)
+                .businessName("ACME")
+                .status(ProviderStatus.ACTIVE)
+                .build();
+
+        when(providerRepository.findById(providerId))
+                .thenReturn(Optional.of(provider));
+
+        when(paymentOrderRepository
+                .getTotalPaidByProviderAndDateRange(
+                        any(),
+                        any(),
+                        any()
+                ))
+                .thenReturn(BigDecimal.valueOf(5000000));
+
+        ProviderPaymentReportResponse response =
+                paymentOrderService.getProviderPaymentReport(
+                        providerId,
+                        LocalDate.now().minusDays(30),
+                        LocalDate.now()
+                );
+
+        assertEquals(
+                BigDecimal.valueOf(5000000),
+                response.getTotalPaid()
+        );
+    }
+
+    @Test
+    void shouldReturnExpiringOrders() {
+
+        Provider provider = Provider.builder()
+                .businessName("ACME")
+                .build();
+
+        PaymentOrder order = PaymentOrder.builder()
+                .provider(provider)
+                .amount(BigDecimal.valueOf(1000))
+                .concept("Test")
+                .status(PaymentOrderStatus.APPROVED)
+                .createdAt(LocalDateTime.now().minusDays(28))
+                .build();
+
+        when(paymentOrderRepository
+                .findByStatusAndCreatedAtBefore(
+                        eq(PaymentOrderStatus.APPROVED),
+                        any()
+                ))
+                .thenReturn(List.of(order));
+
+        List<ExpiringPaymentOrderResponse> response =
+                paymentOrderService.getExpiringOrders();
+
+        assertFalse(response.isEmpty());
     }
 
 }
