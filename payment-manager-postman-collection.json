@@ -1,0 +1,385 @@
+{
+  "info": {
+    "name": "Payment Management API",
+    "_postman_id": "8f5f2b4e-7f12-4b89-a123-56e4f1b9c001",
+    "description": "Postman collection for Ginko Financial Solutions backend technical test.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Providers",
+      "item": [
+        {
+          "name": "Create Provider",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"ACME SAS\",\n  \"taxId\": \"123456789\",\n  \"email\": \"acme@test.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/providers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Providers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/providers?page=0&size=5&sort=businessName,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                },
+                {
+                  "key": "sort",
+                  "value": "businessName,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Providers By Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/providers?status=ACTIVE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Provider By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/providers/{{providerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers",
+                "{{providerId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Provider",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"ACME UPDATED SAS\",\n  \"taxId\": \"123456789\",\n  \"email\": \"updated@test.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/providers/{{providerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers",
+                "{{providerId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Provider Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/providers/{{providerId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "providers",
+                "{{providerId}}",
+                "status"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Orders",
+      "item": [
+        {
+          "name": "Create Payment Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerId\": \"{{providerId}}\",\n  \"amount\": 1500000,\n  \"concept\": \"Software development services\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Payment Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders?page=0&size=10&sort=createdAt,desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "createdAt,desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Payment Orders By Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders?status=APPROVED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "APPROVED"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Payment Orders By Provider",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders?providerId={{providerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders"
+              ],
+              "query": [
+                {
+                  "key": "providerId",
+                  "value": "{{providerId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payment Order By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/{{paymentOrderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "{{paymentOrderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Approve Payment Order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/{{paymentOrderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "{{paymentOrderId}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Payment Order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REJECTED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/{{paymentOrderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "{{paymentOrderId}}",
+                "status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pay Payment Order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PAID\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-orders/{{paymentOrderId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-orders",
+                "{{paymentOrderId}}",
+                "status"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "providerId",
+      "value": ""
+    },
+    {
+      "key": "paymentOrderId",
+      "value": ""
+    }
+  ]
+}
